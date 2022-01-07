@@ -5,6 +5,7 @@ import {
 } from 'aws-lambda'
 import { ethers } from 'ethers'
 import { signJwt } from '../util/signJwt'
+import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
 
 const confirmHttpType = (event: APIGatewayProxyEvent, httpType: string) => {
     if (event.httpMethod !== httpType) {
@@ -26,17 +27,17 @@ export const signIn = async (
         throw new Error('Event body required')
     }
 
-    const { message, signature, address } = JSON.parse(event.body)
+    const { message, signature, address, guildId } = JSON.parse(event.body)
 
     try {
         const recoveredAddressFromMessage = ethers.utils.verifyMessage(message, signature)
         if (recoveredAddressFromMessage.toLowerCase() !== address.toLowerCase()) {
-          throw new Error('Address recovered form message/signature does not match address given')
+            throw new Error('Address recovered form message/signature does not match address given')
         }
 
-        const jwt = signJwt({ address, hasAccess: true })
+        const hasAccess = await userHasAccessToGuild(address, guildId)
 
-        console.log(JSON.stringify(jwt, null, 2))
+        const jwt = signJwt({ address, hasAccess })
 
         return {
             statusCode: 200,

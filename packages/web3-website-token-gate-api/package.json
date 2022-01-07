@@ -4,6 +4,7 @@
   "description": "web3-website-token-gate-api",
   "private": true,
   "dependencies": {
+    "axios": "^0.24.0",
     "ethers": "^5.5.3",
     "jsonwebtoken": "^8.5.1",
     "source-map-support": "^0.5.19"
