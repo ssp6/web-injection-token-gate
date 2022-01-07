@@ -43,7 +43,7 @@ Resources:
           Type: Api
           Properties:
             Path: /signIn
-            Method: GET # TODO: Change to POST
+            Method: POST
   UserHasAccessFunction:
     Type: AWS::Serverless::Function
     Metadata:

@@ -7,5 +7,6 @@ module.exports = {
     "<rootDir>/__tests__/utils",
     "<rootDir>/__tests__/global-setup.js",
   ],
+  setupFiles: ["<rootDir>/.jest/setEnvVars.js"],
   clearMocks: true,
 };
