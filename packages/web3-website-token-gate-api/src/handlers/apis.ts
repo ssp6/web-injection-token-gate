@@ -6,6 +6,7 @@ import {
 import { ethers } from 'ethers'
 import { signJwt } from '../util/signJwt'
 import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
+import { verifyJwtPayload } from '../util/verifyJwtPayload'
 
 const confirmHttpType = (event: APIGatewayProxyEvent, httpType: string) => {
     if (event.httpMethod !== httpType) {
@@ -27,9 +28,9 @@ export const signIn = async (
         throw new Error('Event body required')
     }
 
-    const { message, signature, address, guildId } = JSON.parse(event.body)
-
+    // All errors return 400 just with different message
     try {
+        const { message, signature, address, guildId } = JSON.parse(event.body)
         const recoveredAddressFromMessage = ethers.utils.verifyMessage(message, signature)
         if (recoveredAddressFromMessage.toLowerCase() !== address.toLowerCase()) {
             throw new Error('Address recovered form message/signature does not match address given')
@@ -61,12 +62,36 @@ export const userHasAccess = async (
 ): Promise<APIGatewayProxyResult> => {
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
+    confirmHttpType(event, 'POST')
+    if (!event.body) {
+        throw new Error('Event body required')
+    }
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            message: 'User has access endpoint!',
-        }),
+    // All errors return 400 just with different message
+    try {
+        const { guildId } = JSON.parse(event.body)
+        const authorizationHeader = event.headers['Authorization']
+        const jwtToken = authorizationHeader?.split(" ")[1]
+        if (!jwtToken) {
+            throw new Error('No JWT token in Authorization')
+        }
+
+        const { address } = verifyJwtPayload(jwtToken)
+        const hasAccess = await userHasAccessToGuild(address, guildId)
+
+        const jwt = signJwt({ address, hasAccess })
+
+        return {
+            statusCode: 200,
+            body: jwt,
+        }
+    } catch (e: any) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: e.message,
+            }),
+        }
     }
 }
 

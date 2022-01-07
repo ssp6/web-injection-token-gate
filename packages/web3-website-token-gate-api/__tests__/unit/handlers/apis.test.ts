@@ -39,22 +39,34 @@ describe('Test signIn', () => {
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
+    // TODO: Test what happens if give wrong body
 })
 
 describe('Test userHasAccess', () => {
     it('should return message', async () => {
-        const event = constructAPIGwEvent({}, { method: 'GET', path: '/userHasAccess' })
+        // Given
+        const address = wallet.address
+        const guildId = 8
+        const event = constructAPIGwEvent({ guildId },{
+            method: 'POST',
+            path: '/userHasAccess',
+            headers: {
+                Authorization: `Bearer ${signJwt({ address, hasAccess: true })}`
+            }
+        })
+        mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 777, access: false }] })
 
-        // Invoke exampleHandler()
+        // When
         const result = await userHasAccess(event)
 
+        // Then
         const expectedResult = {
             statusCode: 200,
-            body: JSON.stringify({ message: 'User has access endpoint!' }),
+            body: signJwt({ address, hasAccess: false }),
         }
 
-        // Compare the result with the expected result
         expect(result).toEqual(expectedResult)
+        expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
 })
 

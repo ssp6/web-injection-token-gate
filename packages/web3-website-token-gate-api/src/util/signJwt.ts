@@ -1,11 +1,7 @@
 import jwt from 'jsonwebtoken'
+import { JwtDataPayload } from './JwtDataPayload'
 
-type JwtData = {
-    address: string,
-    hasAccess: boolean
-}
-
-export const signJwt = (data: JwtData) =>
+export const signJwt = (data: JwtDataPayload) =>
     jwt.sign(data, process.env.JWT_SECRET!, {
         expiresIn: "30m"
     })

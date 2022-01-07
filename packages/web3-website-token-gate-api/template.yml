@@ -56,7 +56,7 @@ Resources:
           Type: Api
           Properties:
             Path: /userHasAccess
-            Method: GET
+            Method: POST
   RefreshJwtTokenFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -69,7 +69,7 @@ Resources:
           Type: Api
           Properties:
             Path: /refresh
-            Method: GET # TODO: Change to POST
+            Method: POST
 
   # Shared layer with Lambda runtime dependencies
   RuntimeDependenciesLayer:
