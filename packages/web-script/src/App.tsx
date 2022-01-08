@@ -30,8 +30,6 @@ const logoutOfWeb3Modal = async () => {
 
 // Reload provider when account is changed
 window.ethereum && window.ethereum.on("accountsChanged", (accounts: string[]) => {
-    // TODO: Remove
-    console.log(`Changed accounts: ${accounts}`)
     web3Modal.cachedProvider &&
     setTimeout(() => {
         window.location.reload()
@@ -42,7 +40,6 @@ function App() {
     console.log('App render')
     const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
 
-    // useWeb3Modal({ cacheProvider: true }, (p) => setInjectedProvider(p))
     const loadWeb3Modal = useCallback(async () => {
         const provider = await web3Modal.connect()
         setInjectedProvider(new Web3Provider(provider))
@@ -58,26 +55,24 @@ function App() {
     // const address = useGetUserFromProviders(injectedProvider)
 
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>Membership site!</h1>
+        <div className="App" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <h1>Membership site!</h1>
 
-                {!injectedProvider ?
-                    <button
-                        onClick={loadWeb3Modal}
-                        key="loginbutton"
-                    >
-                        <h3>Connect Wallet</h3>
-                    </button>
-                    :
-                    <button
-                        onClick={logoutOfWeb3Modal}
-                        key="logoutButton"
-                    >
-                        <h3>Disconnect Wallet</h3>
-                    </button>
-                }
-            </header>
+            {!injectedProvider ?
+                <button
+                    onClick={loadWeb3Modal}
+                    key="loginbutton"
+                >
+                    <h3>Connect Wallet</h3>
+                </button>
+                :
+                <button
+                    onClick={logoutOfWeb3Modal}
+                    key="logoutButton"
+                >
+                    <h3>Disconnect Wallet</h3>
+                </button>
+            }
         </div>
     )
 }
