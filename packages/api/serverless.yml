@@ -1,0 +1,36 @@
+org: ssp6sean
+app: web3-api
+service: web3-api
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  lambdaHashingVersion: '20201221'
+  httpApi:
+    cors: true
+
+
+functions:
+  defaultCORS:
+    handler: src/handlers/apis.defaultCORS
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: options
+  signIn:
+    handler: src/handlers/apis.signIn
+    events:
+      - httpApi:
+          path: /signIn
+          method: post
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline

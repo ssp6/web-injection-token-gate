@@ -1,16 +1,33 @@
 import 'source-map-support/register'
 import {
-    APIGatewayProxyEvent,
-    APIGatewayProxyResult,
+    APIGatewayProxyResultV2,
+    APIGatewayProxyEventV2
 } from 'aws-lambda'
 import { ethers } from 'ethers'
 import { signJwt } from '../util/signJwt'
 import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
 import { verifyJwtPayload } from '../util/verifyJwtPayload'
 
-const confirmHttpType = (event: APIGatewayProxyEvent, httpType: string) => {
-    if (event.httpMethod !== httpType) {
-        throw new Error(`Only HTTP method allowed is ${httpType}, you received: ${event.httpMethod} request.`)
+const confirmHttpType = (event: APIGatewayProxyEventV2, httpType: string) => {
+    if (event.requestContext.http.method !== httpType) {
+        throw new Error(`Only HTTP method allowed is ${httpType}, you received: ${event.requestContext.http.method} request.`)
+    }
+}
+
+/**
+ * OPTION /{proxy+}
+ *
+ * Returns proper CORS config
+ */
+export const defaultCORS = (event: APIGatewayProxyEventV2): APIGatewayProxyResultV2 => {
+    console.log('Default CORS Hit!!')
+    return {
+        // Success response
+        statusCode: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({}),
     }
 }
 
@@ -19,8 +36,8 @@ const confirmHttpType = (event: APIGatewayProxyEvent, httpType: string) => {
  * address has access to guild
  */
 export const signIn = async (
-    event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
+    event: APIGatewayProxyEventV2,
+): Promise<APIGatewayProxyResultV2> => {
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
     confirmHttpType(event, 'POST')
@@ -44,7 +61,7 @@ export const signIn = async (
             statusCode: 200,
             body: jwt,
         }
-    } catch (e: any) {
+    } catch (e) {
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -58,8 +75,8 @@ export const signIn = async (
  * Check address in JWT has access to guild
  */
 export const userHasAccess = async (
-    event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
+    event: APIGatewayProxyEventV2,
+): Promise<APIGatewayProxyResultV2> => {
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
     confirmHttpType(event, 'POST')
@@ -85,7 +102,7 @@ export const userHasAccess = async (
             statusCode: 200,
             body: jwt,
         }
-    } catch (e: any) {
+    } catch (e) {
         return {
             statusCode: 400,
             body: JSON.stringify({
@@ -99,8 +116,8 @@ export const userHasAccess = async (
  * Refresh JWT token if expired
  */
 export const refreshJwtToken = async (
-    event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> => {
+    event: APIGatewayProxyEventV2,
+): Promise<APIGatewayProxyResultV2> => {
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
 
@@ -111,3 +128,4 @@ export const refreshJwtToken = async (
         }),
     }
 }
+

@@ -1,9 +1,9 @@
 import { ethers } from 'ethers'
 import axios from 'axios'
-import { AGORA_SPACE_API_BASE } from '../../../src/util/consts'
-import { signJwt } from '../../../src/util/signJwt'
-import { constructAPIGwEvent } from '../../utils/helpers'
-import { signIn, userHasAccess, refreshJwtToken } from '../../../src/handlers/apis'
+import { AGORA_SPACE_API_BASE } from '../src/util/consts'
+import { signJwt } from '../src/util/signJwt'
+import { signIn, userHasAccess, refreshJwtToken } from '../src/handlers/apis'
+import { constructAPIGwEvent } from './utils/helpers'
 
 jest.mock('axios')
 const mockAxios = axios as jest.Mocked<typeof axios>
@@ -18,14 +18,14 @@ describe('Test signIn', () => {
         const signature = await wallet.signMessage(testMessage)
         const address = wallet.address
         const guildId = 8
-        const event = constructAPIGwEvent({
+        const event = constructAPIGwEvent({ method: 'POST', path: '/signIn' }, {
                 message: testMessage,
                 signature,
                 address,
                 guildId,
             },
-            { method: 'POST', path: '/signIn' },
         )
+        console.log(`signature: ${signature} | address: ${address}`)
         mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 666, access: true }] })
 
         // When
@@ -47,13 +47,15 @@ describe('Test userHasAccess', () => {
         // Given
         const address = wallet.address
         const guildId = 8
-        const event = constructAPIGwEvent({ guildId },{
-            method: 'POST',
-            path: '/userHasAccess',
-            headers: {
-                Authorization: `Bearer ${signJwt({ address, hasAccess: true })}`
-            }
-        })
+        const event = constructAPIGwEvent({
+                method: 'POST',
+                path: '/userHasAccess',
+                headers: {
+                    Authorization: `Bearer ${signJwt({ address, hasAccess: true })}`,
+                },
+            },
+            { guildId },
+        )
         mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 777, access: false }] })
 
         // When
@@ -72,7 +74,7 @@ describe('Test userHasAccess', () => {
 
 describe('Test refreshJwtToken', () => {
     it('should return message', async () => {
-        const event = constructAPIGwEvent({}, { method: 'GET', path: '/refresh' })
+        const event = constructAPIGwEvent({ method: 'GET', path: '/refresh' })
 
         // Invoke exampleHandler()
         const result = await refreshJwtToken(event)

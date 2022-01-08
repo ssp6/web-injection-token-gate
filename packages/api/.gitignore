@@ -1,4 +1,8 @@
+# package directories
 node_modules
-.aws-sam
-env.json
-dist/
+jspm_packages
+
+# Serverless directories
+.serverless
+
+.build
