@@ -19,7 +19,25 @@ const _400 = (body?: { [key: string]: any }): APIGatewayProxyResultV2 => ({
     body: body ? JSON.stringify(body, null, 2) : undefined,
 })
 
+const _401 = (body?: { [key: string]: any }): APIGatewayProxyResultV2 => ({
+    statusCode: 401,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+    },
+    body: body ? JSON.stringify(body, null, 2) : undefined,
+})
+
+const _403 = (body?: { [key: string]: any }): APIGatewayProxyResultV2 => ({
+    statusCode: 401,
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+    },
+    body: body ? JSON.stringify(body, null, 2) : undefined,
+})
+
 export const createResponse = {
     _200,
     _400,
+    _401,
+    _403
 }

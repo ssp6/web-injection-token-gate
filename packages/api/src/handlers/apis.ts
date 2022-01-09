@@ -60,23 +60,35 @@ export const userHasAccess = async (
         throw new Error('Event body required')
     }
 
-    // All errors return 400 just with different message
+    // Authorize JWT
+    if (!event.headers.Authorization) {
+        return createResponse._400({ message: 'Unauthorized - no authorization header' })
+    }
+    const tokenParts = event.headers.Authorization.split(' ')
+    if (!(tokenParts.length === 2 && tokenParts[0].toLowerCase() === 'bearer' && tokenParts[1])) {
+        return createResponse._400({ message: 'Unauthorized - no auth token' })
+    }
+    const jwtToken = tokenParts[1]
+
+    let decodedJwt
+    try {
+        decodedJwt = verifyJwtPayload(jwtToken)
+    } catch (e) {
+        return createResponse._403({ message: e.message })
+    }
+    const { address } = decodedJwt
+
+    // Check has access to guild
     try {
         const { guildId } = JSON.parse(event.body)
-        const authorizationHeader = event.headers['Authorization']
-        const jwtToken = authorizationHeader?.split(" ")[1]
-        if (!jwtToken) {
-            throw new Error('No JWT token in Authorization')
-        }
-
-        const { address } = verifyJwtPayload(jwtToken)
         const hasAccess = await userHasAccessToGuild(address, guildId)
 
         const authToken = signJwt({ address, hasAccess })
 
         return createResponse._200({ authToken })
     } catch (e) {
-        return createResponse._400({ message: e.message })
+        // 401: Jwt is not valid so fetch another
+        return createResponse._401({ message: e.message })
     }
 }
 
