@@ -4,7 +4,7 @@ import {
     APIGatewayProxyEventV2
 } from 'aws-lambda'
 import { ethers } from 'ethers'
-import { createSuccessfulCorsResponse } from '../util/createSuccessfulCorsResponse'
+import { createResponse } from '../util/createResponse'
 import { signJwt } from '../util/signJwt'
 import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
 import { verifyJwtPayload } from '../util/verifyJwtPayload'
@@ -39,16 +39,11 @@ export const signIn = async (
 
         const hasAccess = await userHasAccessToGuild(address, guildId)
 
-        const jwt = signJwt({ address, hasAccess })
+        const authToken = signJwt({ address, hasAccess })
 
-        return createSuccessfulCorsResponse(jwt)
+        return createResponse._200({ authToken })
     } catch (e) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: e.message,
-            }),
-        }
+        return createResponse._400({ message: e.message })
     }
 }
 
@@ -77,16 +72,11 @@ export const userHasAccess = async (
         const { address } = verifyJwtPayload(jwtToken)
         const hasAccess = await userHasAccessToGuild(address, guildId)
 
-        const jwt = signJwt({ address, hasAccess })
+        const authToken = signJwt({ address, hasAccess })
 
-        return createSuccessfulCorsResponse(jwt)
+        return createResponse._200({ authToken })
     } catch (e) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                message: e.message,
-            }),
-        }
+        return createResponse._400({ message: e.message })
     }
 }
 
@@ -99,8 +89,6 @@ export const refreshJwtToken = async (
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
 
-    return createSuccessfulCorsResponse(JSON.stringify({
-        message: 'Refresh token endpoint!',
-    }))
+    return createResponse._200({ message: 'Refresh token endpoint!' })
 }
 
