@@ -1,10 +1,12 @@
-import { Web3Provider } from "@ethersproject/providers"
 import axios from 'axios'
 import { TEthersProvider } from 'eth-hooks/models'
 import { ethers } from 'ethers'
 import React, { useCallback, useState, useEffect } from 'react'
 import Web3Modal from "web3modal"
 import { useGetUserFromProviders } from "eth-hooks"
+import jwtDecode from "jwt-decode"
+import { JwtDataPayloadDecoded } from '../../api/src/util/JwtDataPayload'
+import { JsonPayload } from './JsonPayload'
 
 const web3Modal = new Web3Modal({
     cacheProvider: true,
@@ -41,6 +43,7 @@ function App() {
     const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
     const [isSigning, setIsSigning] = useState(false)
     const [jwtToken, setJwtToken] = useState()
+    const [error, setError] = useState<string | null>(null)
 
     const user = useGetUserFromProviders(injectedProvider)
 
@@ -99,8 +102,12 @@ function App() {
             // TODO: Grab guild id
             const { data } = await axios.post(
                 `${API_BASE_URL}/signIn`,
-                { signature, message, address, guildId: 1638 },
-                {}
+                {
+                    signature, message, address,
+                    // @ts-expect-error
+                    guildId: document.guildId,
+                },
+                {},
             )
             setJwtToken(data.authToken)
 
@@ -117,16 +124,23 @@ function App() {
     // Remove covert if jwt
     useEffect(() => {
         if (jwtToken) {
+            const decodedJwt = jwtDecode<JsonPayload>(jwtToken)
+            console.log(decodedJwt)
+            if (!decodedJwt?.hasAccess) {
+                setError('You do not have access to this community')
+                return
+            }
             // @ts-expect-error
             document.getElementById("fill-page-container").style.display = "none"
             // @ts-expect-error
             document.getElementsByTagName("body")[0].style = "max-height: 100%; width: 100%; overflow: unset"
+            setError(null)
         }
     }, [jwtToken])
 
     return (
         <div className="App" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', maxWidth: '100%' }}>
-            <h1>Membership site!</h1>
+            <h1>Membership required to access</h1>
 
             {!injectedProvider ?
                 <button
@@ -154,7 +168,8 @@ function App() {
                 </div>
             }
 
-            {jwtToken && <h3 style={{ marginTop: 16 }}>{jwtToken}</h3>}
+            {isSigning && <h3 style={{ marginTop: 16 }}>Loading...</h3>}
+            {error && <h4 style={{ overflowWrap: 'break-word', marginTop: 16 }}>{error}</h4>}
         </div>
     )
 }
