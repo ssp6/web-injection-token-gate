@@ -102,8 +102,7 @@ function App() {
                 { signature, message, address, guildId: 1638 },
                 {}
             )
-            console.log(data)
-            setJwtToken(data.body)
+            setJwtToken(data.authToken)
 
             // notify user of sign-in
             // TODO: Do something here, successful login!
@@ -115,9 +114,18 @@ function App() {
         setIsSigning(false)
     }
 
+    // Remove covert if jwt
+    useEffect(() => {
+        if (jwtToken) {
+            // @ts-expect-error
+            document.getElementById("fill-page-container").style.display = "none"
+            // @ts-expect-error
+            document.getElementsByTagName("body")[0].style = "max-height: 100%; width: 100%; overflow: unset"
+        }
+    }, [jwtToken])
 
     return (
-        <div className="App" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <div className="App" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', maxWidth: '100%' }}>
             <h1>Membership site!</h1>
 
             {!injectedProvider ?
@@ -145,6 +153,8 @@ function App() {
                     </button>
                 </div>
             }
+
+            {jwtToken && <h3 style={{ marginTop: 16 }}>{jwtToken}</h3>}
         </div>
     )
 }

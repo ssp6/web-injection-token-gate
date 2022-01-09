@@ -26,7 +26,8 @@
 
     (function(d) {
         const script = d.createElement("script");
-        script.src = "../website-injection/build/static/js/main.js"
+        // TODO: Change link to be external
+        script.src = "../packages/site-injection-app/build/static/js/main.js"
         script.type = "module";
         script.defer = true;
         d.head.insertBefore(script, d.head.firstChild);
