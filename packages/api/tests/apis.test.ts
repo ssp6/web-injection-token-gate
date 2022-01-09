@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { AGORA_SPACE_API_BASE } from '../src/util/consts'
+import { createSuccessfulCorsResponse } from '../src/util/createSuccessfulCorsResponse'
 import { signJwt } from '../src/util/signJwt'
 import { signIn, userHasAccess, refreshJwtToken } from '../src/handlers/apis'
 import { constructAPIGwEvent } from './utils/helpers'
@@ -32,10 +33,7 @@ describe('Test signIn', () => {
         const result = await signIn(event)
 
         // Then
-        const expectedResult = {
-            statusCode: 200,
-            body: signJwt({ address, hasAccess: true }),
-        }
+        const expectedResult = createSuccessfulCorsResponse(signJwt({ address, hasAccess: true }))
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
@@ -62,10 +60,7 @@ describe('Test userHasAccess', () => {
         const result = await userHasAccess(event)
 
         // Then
-        const expectedResult = {
-            statusCode: 200,
-            body: signJwt({ address, hasAccess: false }),
-        }
+        const expectedResult = createSuccessfulCorsResponse(signJwt({ address, hasAccess: false }))
 
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
@@ -79,10 +74,7 @@ describe('Test refreshJwtToken', () => {
         // Invoke exampleHandler()
         const result = await refreshJwtToken(event)
 
-        const expectedResult = {
-            statusCode: 200,
-            body: JSON.stringify({ message: 'Refresh token endpoint!' }),
-        }
+        const expectedResult = createSuccessfulCorsResponse(JSON.stringify({ message: 'Refresh token endpoint!' }))
 
         // Compare the result with the expected result
         expect(result).toEqual(expectedResult)

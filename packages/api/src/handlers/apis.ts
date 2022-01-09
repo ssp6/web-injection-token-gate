@@ -4,6 +4,7 @@ import {
     APIGatewayProxyEventV2
 } from 'aws-lambda'
 import { ethers } from 'ethers'
+import { createSuccessfulCorsResponse } from '../util/createSuccessfulCorsResponse'
 import { signJwt } from '../util/signJwt'
 import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
 import { verifyJwtPayload } from '../util/verifyJwtPayload'
@@ -11,23 +12,6 @@ import { verifyJwtPayload } from '../util/verifyJwtPayload'
 const confirmHttpType = (event: APIGatewayProxyEventV2, httpType: string) => {
     if (event.requestContext.http.method !== httpType) {
         throw new Error(`Only HTTP method allowed is ${httpType}, you received: ${event.requestContext.http.method} request.`)
-    }
-}
-
-/**
- * OPTION /{proxy+}
- *
- * Returns proper CORS config
- */
-export const defaultCORS = (event: APIGatewayProxyEventV2): APIGatewayProxyResultV2 => {
-    console.log('Default CORS Hit!!')
-    return {
-        // Success response
-        statusCode: 200,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({}),
     }
 }
 
@@ -57,10 +41,7 @@ export const signIn = async (
 
         const jwt = signJwt({ address, hasAccess })
 
-        return {
-            statusCode: 200,
-            body: jwt,
-        }
+        return createSuccessfulCorsResponse(jwt)
     } catch (e) {
         return {
             statusCode: 400,
@@ -98,10 +79,7 @@ export const userHasAccess = async (
 
         const jwt = signJwt({ address, hasAccess })
 
-        return {
-            statusCode: 200,
-            body: jwt,
-        }
+        return createSuccessfulCorsResponse(jwt)
     } catch (e) {
         return {
             statusCode: 400,
@@ -121,11 +99,8 @@ export const refreshJwtToken = async (
     // All log statements are written to CloudWatch
     console.debug('Received event:', event)
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            message: 'Refresh token endpoint!',
-        }),
-    }
+    return createSuccessfulCorsResponse(JSON.stringify({
+        message: 'Refresh token endpoint!',
+    }))
 }
 

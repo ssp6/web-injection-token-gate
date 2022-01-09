@@ -13,23 +13,18 @@ provider:
   runtime: nodejs12.x
   stage: dev
   lambdaHashingVersion: '20201221'
-  httpApi:
-    cors: true
 
 
 functions:
-  defaultCORS:
-    handler: src/handlers/apis.defaultCORS
-    events:
-      - httpApi:
-          path: /{proxy+}
-          method: options
   signIn:
     handler: src/handlers/apis.signIn
+    environment:
+      JWT_SECRET: ${env:JWT_SECRET}
     events:
       - httpApi:
           path: /signIn
           method: post
+          cors: true
 
 plugins:
   - serverless-plugin-typescript
