@@ -1,35 +1,19 @@
 <!-- Just copy all of this into super.so code head -->
-<!-- TODO: Make the styling neater -->
 <style>
-    body {
-        max-height: 100vh;
-        width: 100vw;
-        overflow: hidden;
-    }
-
-    #fill-page-container {
-        width: 100vw;
-        height: 100vh;
-        position: absolute;
-        background: #1c2022;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 69;
-    }
+    body {max-height: 100vh;width: 100vw;overflow: hidden;}
+    #fill-page-container {width: 100vw;height: 100vh;position: absolute;background: #1c2022;display: flex;align-items: center;justify-content: center;z-index: 69;}
 </style>
 <script defer type="module">
-    const MembershipBlockId = 1638;
+    document.guildId = 1638;
     const fillPageContainer = document.createElement("div");
     fillPageContainer.id = "fill-page-container";
     document.body.insertBefore(fillPageContainer, document.body.firstChild);
-
     (function(d) {
         const script = d.createElement("script");
         script.src = "https://web3-site-injection-token-gate.netlify.app/main.js"
-        // script.src = "../packages/site-injection-app/build/static/js/main.js"
         script.type = "module";
         script.defer = true;
+        script.crossOrigin = "anonymous";
         d.head.insertBefore(script, d.head.firstChild);
     }(document))
 </script>
