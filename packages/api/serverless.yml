@@ -5,27 +5,26 @@ service: web3-api
 # Create an optimized package for our functions
 package:
   individually: true
-
 frameworkVersion: '2'
-
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: dev
+  region: eu-west-1
   lambdaHashingVersion: '20201221'
+  httpApi:
+    cors: true
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
 
 
 functions:
   signIn:
     handler: src/handlers/apis.signIn
     environment:
-      JWT_SECRET: ${env:JWT_SECRET}
+      JWT_SECRET: ${param:JWT_SECRET}
     events:
       - httpApi:
           path: /signIn
           method: post
-          cors: true
-
-plugins:
-  - serverless-plugin-typescript
-  - serverless-offline

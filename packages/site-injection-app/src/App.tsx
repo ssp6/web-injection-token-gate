@@ -5,7 +5,6 @@ import React, { useCallback, useState, useEffect } from 'react'
 import Web3Modal from "web3modal"
 import { useGetUserFromProviders } from "eth-hooks"
 import jwtDecode from "jwt-decode"
-import { JwtDataPayloadDecoded } from '../../api/src/util/JwtDataPayload'
 import { JsonPayload } from './JsonPayload'
 
 const web3Modal = new Web3Modal({
