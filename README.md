@@ -72,3 +72,14 @@ make app_build
 
 You can then, like above, copy the content of [site injection code](./packages/site-injection-app/site-injection-code.html)
 (but uncomment the local development line) into a local running site.
+
+
+## Thanks
+
+None of this could have been build without the help of [Austin Griffith](https://twitter.com/austingriffith) and the
+[build guild](https://buidlguidl.com/) / [scaffold eth](https://github.com/scaffold-eth) team.
+
+Not to mention (agora.space)[https://agora.space], [super.so](https://super.so) and [NotionX](https://github.com/NotionX/react-notion-x)
+teams mentioned above.
+
+All mistakes and bugs are of course my own.
