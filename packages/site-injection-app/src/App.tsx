@@ -5,7 +5,7 @@ import React, { useCallback, useState, useEffect } from 'react'
 import Web3Modal from "web3modal"
 import { useGetUserFromProviders } from "eth-hooks"
 import jwtDecode from "jwt-decode"
-import { usePersistedState } from './hooks/usePersistedState'
+import { usePersistedString } from './hooks/usePersistedString'
 import { JsonPayload } from './JsonPayload'
 import { createAuthHeader } from './util/createAuthHeaer'
 
@@ -48,7 +48,7 @@ window.ethereum && window.ethereum.on("accountsChanged", (accounts: string[]) =>
 function App() {
     const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
     const [isSigning, setIsSigning] = useState(false)
-    const [jwtToken, setJwtToken] = usePersistedState<string>(AUTH_TOKEN_KEY)
+    const [jwtToken, setJwtToken] = usePersistedString(AUTH_TOKEN_KEY, null)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
@@ -66,10 +66,10 @@ function App() {
                     },
                 )
                 // TODO: Update to something more secure
-                setJwtToken(data.authToken)
+                setJwtToken(data.authToken.slice(1, -1))
             } catch (e) {
                 // Do nothing - they'll just be presented with login flow again
-                console.log("checkIfUserHasAccess ERROR: ", e)
+                console.log("checkIfUserHasAccess: ", e)
             }
         }
         checkIfUserHasAccess()
@@ -147,7 +147,7 @@ function App() {
         setError(null)
     }
 
-    // Remove covert if jwt
+    // Remove cover if jwt
     useEffect(() => {
         // TODO: Update to something more secure
         if (jwtToken) {
