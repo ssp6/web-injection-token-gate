@@ -5,7 +5,9 @@ import React, { useCallback, useState, useEffect } from 'react'
 import Web3Modal from "web3modal"
 import { useGetUserFromProviders } from "eth-hooks"
 import jwtDecode from "jwt-decode"
+import { usePersistedState } from './hooks/usePersistedState'
 import { JsonPayload } from './JsonPayload'
+import { createAuthHeader } from './util/createAuthHeaer'
 
 const web3Modal = new Web3Modal({
     cacheProvider: true,
@@ -21,8 +23,14 @@ const web3Modal = new Web3Modal({
 })
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
+const AUTH_TOKEN_KEY = 'jwtAuthToken'
+
+const clearPersistedData = () => {
+    window.localStorage.removeItem(AUTH_TOKEN_KEY)
+}
 
 const logoutOfWeb3Modal = async () => {
+    clearPersistedData()
     await web3Modal.clearCachedProvider()
     setTimeout(() => {
         window.location.reload()
@@ -38,20 +46,24 @@ window.ethereum && window.ethereum.on("accountsChanged", (accounts: string[]) =>
 })
 
 function App() {
-    console.log('App render')
     const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
     const [isSigning, setIsSigning] = useState(false)
-    const [jwtToken, setJwtToken] = useState<string>()
+    const [jwtToken, setJwtToken] = usePersistedState<string>(AUTH_TOKEN_KEY)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const checkIfUserHasAccess = async () => {
+            if (!jwtToken) {
+                return
+            }
             try {
                 const { data } = await axios.post(
                     `${API_BASE_URL}/userHasAccess`,
                     // @ts-expect-error - declared in html
                     { guildId: document.guildId },
-                    { withCredentials: true }
+                    {
+                        headers: createAuthHeader(jwtToken),
+                    },
                 )
                 // TODO: Update to something more secure
                 setJwtToken(data.authToken)
@@ -140,7 +152,6 @@ function App() {
         // TODO: Update to something more secure
         if (jwtToken) {
             const decodedJwt = jwtDecode<JsonPayload>(jwtToken)
-            console.log(decodedJwt)
             if (!decodedJwt?.hasAccess) {
                 setError('You do not have access to this community')
                 return

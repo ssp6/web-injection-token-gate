@@ -44,10 +44,7 @@ export const signIn = async (
 
         const authToken = signJwt({ address, hasAccess })
         // TODO: Remove authToken from body as it is in the cookie
-        return createResponse._200({ authToken }, {
-            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
-            origin: event.headers.Origin,
-        })
+        return createResponse._200({ authToken })
     } catch (e) {
         return createResponse._400({ message: e.message })
     }
@@ -122,11 +119,11 @@ export const userHasAccess = async (
 
     // Authorize JWT
     if (!event.headers.Authorization) {
-        return createResponse._400({ message: 'Unauthorized - no authorization header' })
+        return createResponse._401({ message: 'Unauthorized - no Authorization header' })
     }
     const tokenParts = event.headers.Authorization.split(' ')
     if (!(tokenParts.length === 2 && tokenParts[0].toLowerCase() === 'bearer' && tokenParts[1])) {
-        return createResponse._400({ message: 'Unauthorized - no auth token' })
+        return createResponse._401({ message: 'Unauthorized - no auth token' })
     }
     const jwtToken = tokenParts[1]
 

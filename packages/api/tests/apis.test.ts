@@ -33,10 +33,7 @@ describe('Test signIn', () => {
 
         // Then
         const authToken = signJwt({ address, hasAccess: true })
-        const expectedResult = createResponse._200({ authToken }, {
-            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
-            origin: event.headers.Origin,
-        })
+        const expectedResult = createResponse._200({ authToken })
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })

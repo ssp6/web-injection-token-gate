@@ -28,17 +28,11 @@ functions:
       - httpApi:
           path: /signIn
           method: post
-          cors:
-            origin: '*'
-            allowCredentials: true
   userHasAccess:
-    handler: src/handlers/apis.userHasAccessCookies
+    handler: src/handlers/apis.userHasAccess
     environment:
       JWT_SECRET: ${param:JWT_SECRET}
     events:
       - httpApi:
           path: /userHasAccess
           method: post
-          cors:
-            origin: '*'
-            allowCredentials: true
