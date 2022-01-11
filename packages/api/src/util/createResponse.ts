@@ -1,9 +1,13 @@
 import { APIGatewayProxyResultV2 } from 'aws-lambda'
 
-const _200 = (body: { [key: string]: any }, cookie?: string): APIGatewayProxyResultV2 => ({
+type Options = {
+    cookie?: string,
+    origin?: string
+}
+const _200 = (body: { [key: string]: any }, { cookie, origin }: Options = {}): APIGatewayProxyResultV2 => ({
     statusCode: 200,
     headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': origin || '*',
         'Access-Control-Allow-Headers':'Content-Type,X-Amz-Date,X-Amz-Security-Token,Authorization,X-Api-Key,X-Requested-With,Accept,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Headers',
         'Content-Type': 'application/json',
         'Access-Control-Allow-Credentials': true,

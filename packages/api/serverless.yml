@@ -28,6 +28,9 @@ functions:
       - httpApi:
           path: /signIn
           method: post
+          cors:
+            origin: '*'
+            allowCredentials: true
   userHasAccess:
     handler: src/handlers/apis.userHasAccessCookies
     environment:
@@ -36,3 +39,6 @@ functions:
       - httpApi:
           path: /userHasAccess
           method: post
+          cors:
+            origin: '*'
+            allowCredentials: true

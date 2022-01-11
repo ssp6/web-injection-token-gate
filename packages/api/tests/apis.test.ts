@@ -33,7 +33,10 @@ describe('Test signIn', () => {
 
         // Then
         const authToken = signJwt({ address, hasAccess: true })
-        const expectedResult = createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
+        const expectedResult = createResponse._200({ authToken }, {
+            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
+            origin: event.headers.Origin,
+        })
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
@@ -60,7 +63,10 @@ describe('Test userHasAccessCookies', () => {
 
         // Then
         const authToken = signJwt({ address, hasAccess: true })
-        const expectedResult = createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
+        const expectedResult = createResponse._200({ authToken }, {
+            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
+            origin: event.headers.Origin,
+        })
 
         expect(result).toEqual(expectedResult)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)

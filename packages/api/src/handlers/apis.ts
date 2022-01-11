@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 import {
     APIGatewayProxyResultV2,
-    APIGatewayProxyEventV2
+    APIGatewayProxyEventV2,
 } from 'aws-lambda'
 import { ethers } from 'ethers'
 import { createResponse } from '../util/createResponse'
@@ -44,7 +44,10 @@ export const signIn = async (
 
         const authToken = signJwt({ address, hasAccess })
         // TODO: Remove authToken from body as it is in the cookie
-        return createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
+        return createResponse._200({ authToken }, {
+            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
+            origin: event.headers.Origin,
+        })
     } catch (e) {
         return createResponse._400({ message: e.message })
     }
@@ -68,7 +71,7 @@ export const userHasAccessCookies = async (
         const [key, value] = cookieString.split("=", 2)
         cookies[key] = value
         return cookies
-    }, {} as {[key: string]: string})
+    }, {} as { [key: string]: string })
 
     if (!cookiesObject || !cookiesObject['authToken']) {
         return createResponse._401({ message: "No authToken provided" })
@@ -94,7 +97,10 @@ export const userHasAccessCookies = async (
 
         const authToken = signJwt({ address, hasAccess })
         // TODO: Remove authToken from body as it is in the cookie
-        return createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
+        return createResponse._200({ authToken }, {
+            cookie: `authToken="${authToken}"; HttpOnly; Secure; SameSite=None`,
+            origin: event.headers.Origin,
+        })
     } catch (e) {
         // Failure to sign or get status from guild
         return createResponse._500({ message: e.message })

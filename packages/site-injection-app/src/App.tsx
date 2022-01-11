@@ -51,6 +51,7 @@ function App() {
                     `${API_BASE_URL}/userHasAccess`,
                     // @ts-expect-error - declared in html
                     { guildId: document.guildId },
+                    { withCredentials: true }
                 )
                 // TODO: Update to something more secure
                 setJwtToken(data.authToken)
@@ -121,6 +122,7 @@ function App() {
                     // @ts-expect-error - declared in html
                     guildId: document.guildId,
                 },
+                { withCredentials: true },
             )
             // TODO: Update to something more secure
             setJwtToken(data.authToken)
