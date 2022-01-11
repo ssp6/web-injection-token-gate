@@ -7,7 +7,7 @@ export const verifyJwtPayload = (jwtString: string): JwtDataPayload => {
         const { address, hasAccess } = jwtPayload
 
         return { address, hasAccess }
-    } catch (e: any) {
+    } catch (e) {
         throw new Error(`Unable to verify jwt: ${e.message}`)
     }
 }

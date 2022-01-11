@@ -41,7 +41,7 @@ function App() {
     console.log('App render')
     const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
     const [isSigning, setIsSigning] = useState(false)
-    const [jwtToken, setJwtToken] = useState()
+    const [jwtToken, setJwtToken] = useState<string>()
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
@@ -124,7 +124,7 @@ function App() {
             )
             // TODO: Update to something more secure
             setJwtToken(data.authToken)
-        } catch (e: any) {
+        } catch (e) {
             console.error(e)
             setError(e.message)
         }

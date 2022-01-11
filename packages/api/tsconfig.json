@@ -1,20 +1,10 @@
 {
+  "extends": "@tsconfig/node14/tsconfig.json",
   "compilerOptions": {
-    "lib": ["es2020"],
-    "target": "es2020",
-    "esModuleInterop": true,
     "sourceMap": true,
     "allowJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
+    "checkJs": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
     "outDir": "./dist",
     "rootDir": "./src"
   },

@@ -45,7 +45,7 @@ export const signIn = async (
         const authToken = signJwt({ address, hasAccess })
         // TODO: Remove authToken from body as it is in the cookie
         return createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
-    } catch (e: any) {
+    } catch (e) {
         return createResponse._400({ message: e.message })
     }
 }
@@ -78,7 +78,7 @@ export const userHasAccessCookies = async (
     try {
         console.log("jwt: ", cookiesObject['authToken'])
         decodedJwt = verifyJwtPayload(cookiesObject['authToken'])
-    } catch (e: any) {
+    } catch (e) {
         return createResponse._403({ message: e.message })
     }
     const { address } = decodedJwt
@@ -95,7 +95,7 @@ export const userHasAccessCookies = async (
         const authToken = signJwt({ address, hasAccess })
         // TODO: Remove authToken from body as it is in the cookie
         return createResponse._200({ authToken }, `authToken="${authToken}"; HttpOnly; Secure;`)
-    } catch (e: any) {
+    } catch (e) {
         // Failure to sign or get status from guild
         return createResponse._500({ message: e.message })
     }
@@ -127,7 +127,7 @@ export const userHasAccess = async (
     let decodedJwt
     try {
         decodedJwt = verifyJwtPayload(jwtToken)
-    } catch (e: any) {
+    } catch (e) {
         return createResponse._403({ message: e.message })
     }
     const { address } = decodedJwt
@@ -140,7 +140,7 @@ export const userHasAccess = async (
         const authToken = signJwt({ address, hasAccess })
 
         return createResponse._200({ authToken })
-    } catch (e: any) {
+    } catch (e) {
         return createResponse._401({ message: e.message })
     }
 }

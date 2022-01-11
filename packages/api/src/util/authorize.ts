@@ -30,7 +30,7 @@ export const authorizeJwt = (event: APIGatewayProxyEventV2) => {
         // Return an IAM policy document for the current endpoint
         // const policyDocument = buildIAMPolicy(publicAddress, 'Allow', event.routeArn, authorizerContext);
         // callback(null, policyDocument);
-    } catch (e: any) {
+    } catch (e) {
         console.log({e})
         throw new Error('Unauthorized - no authorization header');
     }
