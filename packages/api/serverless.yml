@@ -28,3 +28,11 @@ functions:
       - httpApi:
           path: /signIn
           method: post
+  userHasAccess:
+    handler: src/handlers/apis.userHasAccessCookies
+    environment:
+      JWT_SECRET: ${param:JWT_SECRET}
+    events:
+      - httpApi:
+          path: /userHasAccess
+          method: post

@@ -44,8 +44,25 @@ function App() {
     const [jwtToken, setJwtToken] = useState()
     const [error, setError] = useState<string | null>(null)
 
-    const user = useGetUserFromProviders(injectedProvider)
+    useEffect(() => {
+        const checkIfUserHasAccess = async () => {
+            try {
+                const { data } = await axios.post(
+                    `${API_BASE_URL}/userHasAccess`,
+                    // @ts-expect-error - declared in html
+                    { guildId: document.guildId },
+                )
+                // TODO: Update to something more secure
+                setJwtToken(data.authToken)
+            } catch (e) {
+                // Do nothing - they'll just be presented with login flow again
+                console.log("checkIfUserHasAccess ERROR: ", e)
+            }
+        }
+        checkIfUserHasAccess()
+    }, [])
 
+    const user = useGetUserFromProviders(injectedProvider)
 
     const loadWeb3Modal = useCallback(async () => {
         const provider = await web3Modal.connect()
@@ -80,14 +97,14 @@ function App() {
         const userSigner = user?.signer
 
         if (!web3Modal.cachedProvider) {
-            // TODO: Show user error
-            console.error('Cannot handle authentication in without provider')
+            console.error('Cannot handle authentication without provider')
+            setError('Cannot handle authentication without provider')
             return
         }
 
         if (!userSigner) {
-            // TODO: Show user error
-            console.error('Cannot handle authentication in without signer signer')
+            console.error('Cannot handle authentication without user signer')
+            setError('Cannot handle authentication without user signer')
             return
         }
 
@@ -97,31 +114,28 @@ function App() {
             // sign message using wallet
             const address = await userSigner.getAddress()
             let signature = await userSigner.signMessage(message)
-            // send signature here for auth token
-            // TODO: Grab guild id
             const { data } = await axios.post(
                 `${API_BASE_URL}/signIn`,
                 {
                     signature, message, address,
-                    // @ts-expect-error
+                    // @ts-expect-error - declared in html
                     guildId: document.guildId,
                 },
-                {},
             )
+            // TODO: Update to something more secure
             setJwtToken(data.authToken)
-
-            // notify user of sign-in
-            // TODO: Do something here, successful login!
-        } catch (error) {
-            // TODO: Show user error
-            console.error(error)
+        } catch (e: any) {
+            console.error(e)
+            setError(e.message)
         }
 
         setIsSigning(false)
+        setError(null)
     }
 
     // Remove covert if jwt
     useEffect(() => {
+        // TODO: Update to something more secure
         if (jwtToken) {
             const decodedJwt = jwtDecode<JsonPayload>(jwtToken)
             console.log(decodedJwt)

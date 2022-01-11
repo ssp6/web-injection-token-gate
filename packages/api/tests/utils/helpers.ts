@@ -7,6 +7,7 @@ export function constructAPIGwEvent(options: Record<string, any> = {}, message?:
     rawPath: options.path,
     rawQueryString: '',
     headers: options.headers || {},
+    cookies: options.cookies,
     requestContext: {
       accountId: 'offlineContext_accountId',
       apiId: 'offlineContext_apiId',

@@ -18,7 +18,7 @@ export const userHasAccessToGuild = async (userAddress: string, guildId: number)
         const data = await axios.get<GuildRoleStatus[]>(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${userAddress}`)
         return data.data.some((guildRoleStatus) => guildRoleStatus.access)
 
-    } catch (e) {
+    } catch (e: any) {
         throw new Error(`Error receiving guild status: ${e.message}`)
     }
 }
