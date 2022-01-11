@@ -150,6 +150,8 @@ export const userHasAccess = async (
 
 /**
  * Refresh JWT token if expired
+ *
+ * TODO: Possibly just going to leave off as 30m without refreshing or clicking on links is quite a while and sign in is so quick
  */
 export const refreshJwtToken = async (
     event: APIGatewayProxyEventV2,

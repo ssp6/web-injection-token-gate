@@ -133,8 +133,7 @@ function App() {
                     signature, message, address,
                     // @ts-expect-error - declared in html
                     guildId: document.guildId,
-                },
-                { withCredentials: true },
+                }
             )
             // TODO: Update to something more secure
             setJwtToken(data.authToken)
