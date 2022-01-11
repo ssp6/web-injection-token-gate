@@ -8,6 +8,7 @@ import jwtDecode from "jwt-decode"
 import { usePersistedString } from './hooks/usePersistedString'
 import { JsonPayload } from './JsonPayload'
 import { createAuthHeader } from './util/createAuthHeaer'
+import { createMessage } from './util/createMessage'
 
 const web3Modal = new Web3Modal({
     cacheProvider: true,
@@ -107,8 +108,15 @@ function App() {
     }, [loadWeb3Modal])
 
     const handleSignIn = async () => {
-        const message = "tokenValidation"
         const userSigner = user?.signer
+
+        // @ts-expect-error - declared in html
+        const { guildUrlName } = document
+        if (!guildUrlName) {
+            console.error('Error in injection, guildUrlName is not set')
+            setError('Error in injection, guildUrlName is not set')
+            return
+        }
 
         if (!web3Modal.cachedProvider) {
             console.error('Cannot handle authentication without provider')
@@ -124,17 +132,15 @@ function App() {
 
         setIsSigning(true)
 
+        const timeStamp = Date.now()
         try {
             // sign message using wallet
             const address = await userSigner.getAddress()
+            const message = createMessage(guildUrlName, timeStamp)
             let signature = await userSigner.signMessage(message)
             const { data } = await axios.post(
                 `${API_BASE_URL}/signIn`,
-                {
-                    signature, message, address,
-                    // @ts-expect-error - declared in html
-                    guildUrlName: document.guildUrlName,
-                }
+                { signature, address, guildUrlName, timeStamp }
             )
             // TODO: Update to something more secure
             setJwtToken(data.authToken)

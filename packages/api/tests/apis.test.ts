@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { AGORA_SPACE_API_BASE } from '../src/util/consts'
+import { createMessage } from '../src/util/createMessage'
 import { createResponse } from '../src/util/createResponse'
 import { signJwt } from '../src/util/signJwt'
 import { signIn, userHasAccess, refreshJwtToken, userHasAccessCookies } from '../src/handlers/apis'
@@ -11,20 +12,21 @@ const mockAxios = axios as jest.Mocked<typeof axios>
 
 
 const wallet = ethers.Wallet.createRandom()
-const testMessage = 'validateToken'
 
 describe('Test signIn', () => {
     it('should sign in', async () => {
         // Given
-        const signature = await wallet.signMessage(testMessage)
-        const address = wallet.address
         const guildUrlName = "testGuildName"
         const guildId = 8
+        const timeStamp = 1641917308025
+        const message = createMessage(guildUrlName, timeStamp)
+        const signature = await wallet.signMessage(message)
+        const address = wallet.address
         const event = constructAPIGwEvent({ method: 'POST', path: '/signIn' }, {
-                message: testMessage,
                 signature,
                 address,
                 guildUrlName,
+                timeStamp,
             },
         )
         mockAxios.get

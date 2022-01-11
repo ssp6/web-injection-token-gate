@@ -4,6 +4,7 @@ import {
     APIGatewayProxyEventV2,
 } from 'aws-lambda'
 import { ethers } from 'ethers'
+import { createMessage } from '../util/createMessage'
 import { createResponse } from '../util/createResponse'
 import { signJwt } from '../util/signJwt'
 import { userHasAccessToGuild } from '../util/userHasAccessToGuild'
@@ -31,8 +32,8 @@ export const signIn = async (
 
     // All errors return 400 just with different message
     try {
-        const { message, signature, address, guildUrlName } = JSON.parse(event.body)
-        const recoveredAddressFromMessage = ethers.utils.verifyMessage(message, signature)
+        const { signature, address, guildUrlName, timeStamp } = JSON.parse(event.body)
+        const recoveredAddressFromMessage = ethers.utils.verifyMessage(createMessage(guildUrlName, timeStamp), signature)
         if (recoveredAddressFromMessage.toLowerCase() !== address.toLowerCase()) {
             throw new Error('Address recovered form message/signature does not match address given')
         }
