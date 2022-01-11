@@ -18,15 +18,18 @@ describe('Test signIn', () => {
         // Given
         const signature = await wallet.signMessage(testMessage)
         const address = wallet.address
+        const guildUrlName = "testGuildName"
         const guildId = 8
         const event = constructAPIGwEvent({ method: 'POST', path: '/signIn' }, {
                 message: testMessage,
                 signature,
                 address,
-                guildId,
+                guildUrlName,
             },
         )
-        mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 666, access: true }] })
+        mockAxios.get
+            .mockResolvedValueOnce({ data: { id: guildId } })
+            .mockResolvedValue({ data: [{ roleId: 666, access: true }] })
 
         // When
         const result = await signIn(event)
@@ -35,6 +38,7 @@ describe('Test signIn', () => {
         const authToken = signJwt({ address, hasAccess: true })
         const expectedResult = createResponse._200({ authToken })
         expect(result).toEqual(expectedResult)
+        expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/urlName/${guildUrlName}`)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
     // TODO: Test what happens if give wrong body
@@ -44,16 +48,19 @@ describe('Test userHasAccessCookies', () => {
     it('should 200, given address has access to site', async () => {
         // Given
         const address = wallet.address
+        const guildUrlName = "testGuildName"
         const guildId = 8
         const event = constructAPIGwEvent({
                 method: 'POST',
                 path: '/userHasAccess',
                 cookies: [`authToken=${signJwt({ address, hasAccess: true })}`],
             },
-            { guildId },
+            { guildUrlName },
         )
 
-        mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 777, access: true }] })
+        mockAxios.get
+            .mockResolvedValueOnce({ data: { id: guildId } })
+            .mockResolvedValue({ data: [{ roleId: 666, access: true }] })
 
         // When
         const result = await userHasAccessCookies(event)
@@ -66,17 +73,18 @@ describe('Test userHasAccessCookies', () => {
         })
 
         expect(result).toEqual(expectedResult)
+        expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/urlName/${guildUrlName}`)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
 
     it('should return 401, given no authToken cookie', async () => {
         // Given
-        const guildId = 8
+        const guildUrlName = "testUrlName"
         const event = constructAPIGwEvent({
                 method: 'POST',
                 path: '/userHasAccess',
             },
-            { guildId },
+            { guildUrlName },
         )
 
         // When
@@ -92,24 +100,28 @@ describe('Test userHasAccessCookies', () => {
     it('should return 403, given address does not have access', async () => {
         // Given
         const address = wallet.address
+        const guildUrlName = "testGuildName"
         const guildId = 8
         const event = constructAPIGwEvent({
                 method: 'POST',
                 path: '/userHasAccess',
                 cookies: [`authToken=${signJwt({ address, hasAccess: false })}`],
             },
-            { guildId },
+            { guildUrlName },
         )
 
-        mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 777, access: false }] })
+        mockAxios.get
+            .mockResolvedValueOnce({ data: { id: guildId } })
+            .mockResolvedValue({ data: [{ roleId: 666, access: false }] })
 
         // When
         const result = await userHasAccessCookies(event)
 
         // Then
-        const expectedResult = createResponse._403({ message: `Address ${address} does not have access to guild ${guildId}`})
+        const expectedResult = createResponse._403({ message: `Address ${address} does not have access to guild ${guildUrlName}` })
 
         expect(result).toEqual(expectedResult)
+        expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/urlName/${guildUrlName}`)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
 })
@@ -119,6 +131,7 @@ describe('Test userHasAccess', () => {
     it('should return message', async () => {
         // Given
         const address = wallet.address
+        const guildUrlName = "testUrlName"
         const guildId = 8
         const event = constructAPIGwEvent({
                 method: 'POST',
@@ -127,17 +140,20 @@ describe('Test userHasAccess', () => {
                     Authorization: `Bearer ${signJwt({ address, hasAccess: true })}`,
                 },
             },
-            { guildId },
+            { guildUrlName },
         )
-        mockAxios.get.mockResolvedValueOnce({ data: [{ roleId: 777, access: false }] })
+        mockAxios.get
+            .mockResolvedValueOnce({ data: { id: guildId } })
+            .mockResolvedValue({ data: [{ roleId: 666, access: true }] })
 
         // When
         const result = await userHasAccess(event)
 
         // Then
-        const expectedResult = createResponse._200({ authToken: signJwt({ address, hasAccess: false }) })
+        const expectedResult = createResponse._200({ authToken: signJwt({ address, hasAccess: true }) })
 
         expect(result).toEqual(expectedResult)
+        expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/urlName/${guildUrlName}`)
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
 })

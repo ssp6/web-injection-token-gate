@@ -60,7 +60,7 @@ function App() {
                 const { data } = await axios.post(
                     `${API_BASE_URL}/userHasAccess`,
                     // @ts-expect-error - declared in html
-                    { guildId: document.guildId },
+                    { guildUrlName: document.guildUrlName },
                     {
                         headers: createAuthHeader(jwtToken),
                     },
@@ -133,7 +133,7 @@ function App() {
                 {
                     signature, message, address,
                     // @ts-expect-error - declared in html
-                    guildId: document.guildId,
+                    guildUrlName: document.guildUrlName,
                 }
             )
             // TODO: Update to something more secure

@@ -1,4 +1,4 @@
-.PHONY install
+.PHONY: install
 install:
 	cd packages/site-injection-app && yarn && cd ../api && yarn
 
@@ -18,3 +18,7 @@ api_start:
 .PHONY: api_deploy
 api_deploy:
 	cd packages/api && yarn deploy
+
+.PHONY: test
+test:
+	cd packages/api && yarn tsc && yarn test && cd ../site-injection-app && yarn tsc

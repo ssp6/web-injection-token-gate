@@ -31,15 +31,15 @@ export const signIn = async (
 
     // All errors return 400 just with different message
     try {
-        const { message, signature, address, guildId } = JSON.parse(event.body)
+        const { message, signature, address, guildUrlName } = JSON.parse(event.body)
         const recoveredAddressFromMessage = ethers.utils.verifyMessage(message, signature)
         if (recoveredAddressFromMessage.toLowerCase() !== address.toLowerCase()) {
             throw new Error('Address recovered form message/signature does not match address given')
         }
 
-        const hasAccess = await userHasAccessToGuild(address, guildId)
+        const hasAccess = await userHasAccessToGuild(address, guildUrlName)
         if (!hasAccess) {
-            return createResponse._403({ message: `Address ${address} does not have access to guild ${guildId}` })
+            return createResponse._403({ message: `Address ${address} does not have access to guild ${guildUrlName}` })
         }
 
         const authToken = signJwt({ address, hasAccess })
@@ -85,11 +85,11 @@ export const userHasAccessCookies = async (
 
     // Check has access to guild
     try {
-        const { guildId } = JSON.parse(event.body)
-        const hasAccess = await userHasAccessToGuild(address, guildId)
+        const { guildUrlName } = JSON.parse(event.body)
+        const hasAccess = await userHasAccessToGuild(address, guildUrlName)
 
         if (!hasAccess) {
-            return createResponse._403({ message: `Address ${address} does not have access to guild ${guildId}` })
+            return createResponse._403({ message: `Address ${address} does not have access to guild ${guildUrlName}` })
         }
 
         const authToken = signJwt({ address, hasAccess })
@@ -137,8 +137,8 @@ export const userHasAccess = async (
 
     // Check has access to guild
     try {
-        const { guildId } = JSON.parse(event.body)
-        const hasAccess = await userHasAccessToGuild(address, guildId)
+        const { guildUrlName } = JSON.parse(event.body)
+        const hasAccess = await userHasAccessToGuild(address, guildUrlName)
 
         const authToken = signJwt({ address, hasAccess })
 
