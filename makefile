@@ -1,3 +1,7 @@
+.PHONY install
+install:
+	cd packages/site-injection-app && yarn && cd ../api && yarn
+
 .PHONY: app_build
 app_build:
 	cd packages/site-injection-app && yarn build:watch

@@ -70,6 +70,7 @@ function App() {
             } catch (e) {
                 // Do nothing - they'll just be presented with login flow again
                 console.log("checkIfUserHasAccess: ", e)
+                setJwtToken(null)
             }
         }
         checkIfUserHasAccess()
@@ -144,6 +145,7 @@ function App() {
 
         setIsSigning(false)
         setError(null)
+        setJwtToken(null)
     }
 
     // Remove cover if jwt

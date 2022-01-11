@@ -1,4 +1,11 @@
-# Serverless Framework Node with Typescript HTTP API on AWS
+# This is API to Web3 site injection token gating
+
+It's pretty simple and nearly definitely has some flaws, but it just ensures that a user has
+access to wallet (using `/signIn`) and then ensures that wallet meets the criteria of the [guild](https://alpha.guild.xyz)
+set by the site owner.
+
+
+## Serverless Framework Node with Typescript HTTP API on AWS
 
 This template demonstrates how to make a simple HTTP API with Node.js and Typescript running on AWS Lambda and API Gateway using the Serverless Framework v1.
 
