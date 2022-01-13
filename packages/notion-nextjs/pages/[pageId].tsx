@@ -3,20 +3,11 @@ import React from 'react'
 import { domain } from 'lib/config'
 import { resolveNotionPage } from 'lib/resolve-notion-page'
 import { NotionPage } from 'components'
+import { ensureAuthTokenHasAccessToGuild } from '../lib/ensureAuthTokenHasAccessToGuild'
+import { redirectSignIn } from '../lib/redirectSignIn'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const authToken = context.req?.cookies?.authToken
-  if (!authToken) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: `/sign-in`
-      }
-    }
-  }
-
   const rawPageId = context.params.pageId as string
-
   if (rawPageId === 'sitemap.xml' || rawPageId === 'robots.txt') {
     return {
       redirect: {
@@ -24,6 +15,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         destination: `/api/${rawPageId}`
       }
     }
+  }
+
+  const authToken = context.req?.cookies?.authToken
+  if (!authToken) {
+    return redirectSignIn()
+  }
+
+  try {
+    await ensureAuthTokenHasAccessToGuild(authToken)
+  } catch (e) {
+    console.error(e)
+    return redirectSignIn()
   }
 
   try {

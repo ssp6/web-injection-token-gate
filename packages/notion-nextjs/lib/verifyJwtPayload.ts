@@ -11,13 +11,13 @@ import { JwtDataPayload, JwtDataPayloadDecoded } from './types'
 export const verifyJwtPayload = (jwtString: string): JwtDataPayload => {
   try {
     const jwtPayload = jwt.verify(jwtString, jwtSecret) as JwtDataPayloadDecoded
-    const { address, hasAccess } = jwtPayload
-    if (!address || !hasAccess) {
+    const { address } = jwtPayload
+    if (!address) {
       throw new Error(
-        `payload must contain all keys - { address: ${address}, hasAccess: ${hasAccess} }`
+        `payload must contain all keys - { address: ${address} }`
       )
     }
-    return { address, hasAccess }
+    return { address }
   } catch (e) {
     throw new Error(`Unable to verify jwt: ${e.message}`)
   }

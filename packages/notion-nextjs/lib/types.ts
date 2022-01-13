@@ -89,7 +89,6 @@ export interface PreviewImageMap {
  */
 export interface JwtDataPayload {
   address: string
-  hasAccess: boolean // TODO: Make more robust with some signed code?
 }
 
 /**

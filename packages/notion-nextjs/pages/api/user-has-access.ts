@@ -1,9 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { guildUrlName } from '../../lib/config'
+import { ensureAuthTokenHasAccessToGuild } from '../../lib/ensureAuthTokenHasAccessToGuild'
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
 import { timestampNowPlusMinutes } from '../../lib/timestampNowPlusMinutes'
 import { verifyJwtPayload } from '../../lib/verifyJwtPayload'
 
+/**
+ * API end point that checks if an address, handed through cookie, has access to
+ * to the correct guild/community
+ *
+ * @param req
+ * @param res
+ */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.debug('user-has-access received event:', req)
   if (req.method !== 'POST') {
@@ -15,34 +24,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).json({ error: 'No auth token provided' })
   }
 
-  const { guildUrlName } = req.body || {}
-  if (!guildUrlName) {
-    return res.status(400).json({
-      error: `All arguments required. Received: { guildUrlName: ${guildUrlName} }`
-    })
-  }
-
-  let decodedJwt
+  let address
   try {
-    console.debug('jwt: ', authToken)
-    decodedJwt = verifyJwtPayload(authToken)
+    address = await ensureAuthTokenHasAccessToGuild(authToken)
   } catch (e) {
     return res.status(403).json({
       error: e.message
     })
   }
-  const { address } = decodedJwt
-  console.debug('address: ', address)
 
   try {
-    const hasAccess = await fetchUserHasAccessToGuild(address, guildUrlName)
-    if (!hasAccess) {
-      return res.status(403).send({
-        message: `Address ${address} does not have access to guild ${guildUrlName}`
-      })
-    }
-
-    const authToken = signJwt({ address, hasAccess })
+    const authToken = signJwt({ address })
     // TODO: Add Secure;
     return res
       .status(200)

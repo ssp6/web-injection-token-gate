@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { guildUrlName } from '../../lib/config'
 import { createMessage } from '../../lib/createMessage'
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
@@ -11,10 +12,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ error: `${req.method} method not allowed` })
   }
 
-  const { signature, address, guildUrlName, timeStamp } = req.body || {}
-  if (!signature || !address || !guildUrlName || !timeStamp) {
+  const { signature, address, timeStamp } = req.body || {}
+  if (!signature || !address || !timeStamp) {
     return res.status(400).json({
-      error: `All arguments required. Received: { signature: ${signature}, address: ${address}, guildUrlName: ${guildUrlName}, timeStamp: ${timeStamp} }`
+      error: `All arguments required. Received: { signature: ${signature}, address: ${address}, timeStamp: ${timeStamp} }`
     })
   }
 
@@ -37,7 +38,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
     }
 
-    const authToken = signJwt({ address, hasAccess })
+    const authToken = signJwt({ address })
     return (
       res
         .status(200)

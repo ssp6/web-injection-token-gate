@@ -105,7 +105,7 @@ export const SignIn: React.FC = () => {
       let signature = await userSigner.signMessage(message)
       const data = await ky
         .post('/api/sign-in', {
-          json: { signature, address, guildUrlName, timeStamp }
+          json: { signature, address, timeStamp }
         })
         .json()
 
