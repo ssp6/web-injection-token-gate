@@ -109,6 +109,10 @@ export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`
 }
 
+export const web3AuthApiBaseUrl = getSiteConfig('web3AuthApiBaseUrl', '')
+
+export const jwtSecret = getSiteConfig('jwtSecret', '')
+
 // ----------------------------------------------------------------------------
 
 export const fathomId = isDev ? null : process.env.NEXT_PUBLIC_FATHOM_ID

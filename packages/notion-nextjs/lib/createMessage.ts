@@ -7,4 +7,4 @@
  * TODO: This is common among all 3 packages and can get out of sync, change that
  */
 export const createMessage = (guildUrlName: string, timeStamp: number) =>
-    `Sign into ${guildUrlName} at ${timeStamp}`
+  `Sign into ${guildUrlName} at ${timeStamp}`

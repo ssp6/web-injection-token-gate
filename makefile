@@ -1,6 +1,6 @@
 .PHONY: install
 install:
-	cd packages/site-injection-app && yarn && cd ../api && yarn
+	cd packages/site-injection-app && yarn && cd ../api && yarn && cd ../notion-nextjs && yarn
 
 .PHONY: app_build
 app_build:
@@ -14,10 +14,13 @@ app_build_prod:
 api_start:
 	cd packages/api && yarn start
 
-
 .PHONY: api_deploy
 api_deploy:
 	cd packages/api && yarn deploy
+
+.PHONY: notion_dev
+notion_dev:
+	cd packages/notion-nextjs && yarn dev
 
 .PHONY: test
 test:

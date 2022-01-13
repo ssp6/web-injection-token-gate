@@ -16,7 +16,7 @@ const wallet = ethers.Wallet.createRandom()
 describe('Test signIn', () => {
     it('should sign in', async () => {
         // Given
-        const guildUrlName = "testGuildName"
+        const guildUrlName = "notiontokengate"
         const guildId = 8
         const timeStamp = 1641917308025
         const message = createMessage(guildUrlName, timeStamp)
@@ -29,6 +29,13 @@ describe('Test signIn', () => {
                 timeStamp,
             },
         )
+
+        console.log({
+            signature,
+            address,
+            guildUrlName,
+            timeStamp,
+        })
         mockAxios.get
             .mockResolvedValueOnce({ data: { id: guildId } })
             .mockResolvedValue({ data: [{ roleId: 666, access: true }] })
@@ -127,7 +134,6 @@ describe('Test userHasAccessCookies', () => {
         expect(mockAxios.get).toHaveBeenCalledWith(`${AGORA_SPACE_API_BASE}/guild/access/${guildId}/${address}`)
     })
 })
-
 
 describe('Test userHasAccess', () => {
     it('should return message', async () => {

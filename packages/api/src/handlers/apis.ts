@@ -27,12 +27,14 @@ export const signIn = async (
     console.debug('Received event:', event)
     confirmHttpType(event, 'POST')
     if (!event.body) {
-        throw new Error('Event body required')
+        return createResponse._400({ message: 'Event body required' })
+    }
+    const { signature, address, guildUrlName, timeStamp } = JSON.parse(event.body)
+    if (!signature || !address || !guildUrlName || !timeStamp) {
+        return createResponse._400({ message:`All arguments required. Received: { signature: ${signature}, address: ${address}, guildUrlName: ${guildUrlName}, timeStamp: ${timeStamp} }`})
     }
 
-    // All errors return 400 just with different message
     try {
-        const { signature, address, guildUrlName, timeStamp } = JSON.parse(event.body)
         const recoveredAddressFromMessage = ethers.utils.verifyMessage(createMessage(guildUrlName, timeStamp), signature)
         if (recoveredAddressFromMessage.toLowerCase() !== address.toLowerCase()) {
             throw new Error('Address recovered form message/signature does not match address given')
@@ -47,7 +49,7 @@ export const signIn = async (
         // TODO: Remove authToken from body as it is in the cookie
         return createResponse._200({ authToken })
     } catch (e) {
-        return createResponse._400({ message: e.message })
+        return createResponse._400({ error: e.message })
     }
 }
 
