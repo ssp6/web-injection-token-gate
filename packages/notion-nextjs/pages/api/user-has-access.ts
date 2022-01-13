@@ -4,6 +4,7 @@ import { ensureAuthTokenHasAccessToGuild } from '../../lib/ensureAuthTokenHasAcc
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
 import { timestampNowPlusMinutes } from '../../lib/timestampNowPlusMinutes'
+import { tokenGatingTurnedOff } from '../../lib/tokenGatingTurnedOff'
 import { verifyJwtPayload } from '../../lib/verifyJwtPayload'
 
 /**
@@ -15,6 +16,10 @@ import { verifyJwtPayload } from '../../lib/verifyJwtPayload'
  */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.debug('user-has-access received event:', req)
+  if (tokenGatingTurnedOff()) {
+    return res.status(404).json({ error: '/api/user-has-access end point not available whilst token gating is turned off'})
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: `${req.method} method not allowed` })
   }

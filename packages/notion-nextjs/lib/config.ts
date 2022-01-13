@@ -109,14 +109,11 @@ export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`
 }
 
-export const guildUrlName: string = getSiteConfig('guildUrlName')
+export const web3AuthApiBaseUrl: string = getSiteConfig('web3AuthApiBaseUrl')
 
-export const web3AuthApiBaseUrl: string | null = getSiteConfig(
-  'web3AuthApiBaseUrl',
-  null
-)
+export const guildUrlName: string | null = getSiteConfig('guildUrlName', null)
 
-export const jwtSecret: string | null = getSiteConfig('jwtSecret', null)
+export const jwtSecret: string | null = getSiteConfig('jwtSecret', null) // Only accessible on backend
 
 // ----------------------------------------------------------------------------
 

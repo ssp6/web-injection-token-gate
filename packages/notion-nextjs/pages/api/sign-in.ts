@@ -5,9 +5,14 @@ import { createMessage } from '../../lib/createMessage'
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
 import { timestampNowPlusMinutes } from '../../lib/timestampNowPlusMinutes'
+import { tokenGatingTurnedOff } from '../../lib/tokenGatingTurnedOff'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.debug('sign-in received event:', req)
+  if (tokenGatingTurnedOff()) {
+    return res.status(404).json({ error: '/api/sign-in end point not available whilst token gating is turned off'})
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: `${req.method} method not allowed` })
   }

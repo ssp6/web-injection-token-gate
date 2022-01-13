@@ -9,12 +9,16 @@ import { verifyJwtPayload } from './verifyJwtPayload'
  *
  * Throw error if not, returns address if it does
  */
-export const ensureAuthTokenHasAccessToGuild = async (authToken: string): Promise<string> => {
+export const ensureAuthTokenHasAccessToGuild = async (
+  authToken: string
+): Promise<string> => {
   const decodedJwt = verifyJwtPayload(authToken)
   const { address } = decodedJwt
   const hasAccess = await fetchUserHasAccessToGuild(address, guildUrlName)
   if (!hasAccess) {
-    throw new Error(`Address ${address} does not have access to guild ${guildUrlName}`)
+    throw new Error(
+      `Address ${address} does not have access to guild ${guildUrlName}`
+    )
   }
 
   return address

@@ -8,6 +8,8 @@ import Web3Modal from 'web3modal'
 import { TEthersProvider } from 'eth-hooks/models'
 import { guildUrlName } from '../lib/config'
 import { createMessage } from '../lib/createMessage'
+import { tokenGatingTurnedOff } from '../lib/tokenGatingTurnedOff'
+import { Page404 } from './Page404'
 import { PageHead } from './PageHead'
 import styles from './styles.module.css'
 
@@ -43,6 +45,13 @@ export const SignIn: React.FC = () => {
   const [injectedProvider, setInjectedProvider] = useState<TEthersProvider>()
   const [isSigning, setIsSigning] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (tokenGatingTurnedOff()) {
+      console.error('Re-routing away from /sign-in because token gating turned off')
+      Router.replace('/')
+    }
+  }, [guildUrlName])
 
   const user = useGetUserFromProviders(injectedProvider)
 
@@ -119,6 +128,10 @@ export const SignIn: React.FC = () => {
 
     setIsSigning(false)
     setError(null)
+  }
+
+  if (tokenGatingTurnedOff()) {
+    return <Page404 />
   }
 
   return (
