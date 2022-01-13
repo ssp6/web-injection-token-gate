@@ -8,10 +8,6 @@ notion page is a bigger problem to solve (for another day), but if used in partn
 [NotionX](https://github.com/NotionX/react-notion-x) this can be used to only allow community members to view a site made 
 from a Notion page.
 
-## Example
-A simple little example can be found on cv site [here](https://sean-personal-site.super.site/), only wallets with at
-least 0.001 ETH can access it.
-
 ### Run locally
 
 ## How to set up for Notion
