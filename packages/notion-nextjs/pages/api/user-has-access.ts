@@ -3,10 +3,7 @@ import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
 import { verifyJwtPayload } from '../../lib/verifyJwtPayload'
 
-export default async (
-  req: NextApiRequest,
-  res: NextApiResponse,
-) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.debug('user-has-access received event:', req)
   if (req.method !== 'POST') {
     return res.status(405).json({ error: `${req.method} method not allowed` })
@@ -20,17 +17,17 @@ export default async (
   const { guildUrlName } = req.body || {}
   if (!guildUrlName) {
     return res.status(400).json({
-      error: `All arguments required. Received: { guildUrlName: ${guildUrlName} }`,
+      error: `All arguments required. Received: { guildUrlName: ${guildUrlName} }`
     })
   }
 
   let decodedJwt
   try {
-    console.debug("jwt: ", authToken)
+    console.debug('jwt: ', authToken)
     decodedJwt = verifyJwtPayload(authToken)
   } catch (e) {
     return res.status(403).json({
-      error: e.message,
+      error: e.message
     })
   }
   const { address } = decodedJwt
@@ -39,13 +36,19 @@ export default async (
   try {
     const hasAccess = await fetchUserHasAccessToGuild(address, guildUrlName)
     if (!hasAccess) {
-      return res.status(403).send({ message: `Address ${address} does not have access to guild ${guildUrlName}` })
+      return res
+        .status(403)
+        .send({
+          message: `Address ${address} does not have access to guild ${guildUrlName}`
+        })
     }
 
     const authToken = signJwt({ address, hasAccess })
     // TODO: Add Secure;
-    return res.status(200).setHeader('Set-Cookie', `authToken="${authToken}"; HttpOnly;`).send({ message: 'User has access to guild'})
-
+    return res
+      .status(200)
+      .setHeader('Set-Cookie', `authToken="${authToken}"; HttpOnly;`)
+      .send({ message: 'User has access to guild' })
   } catch (e) {
     return res.status(500).json({ error: e.message })
   }

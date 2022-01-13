@@ -84,13 +84,12 @@ export interface PreviewImageMap {
   [url: string]: PreviewImage
 }
 
-
 /**
  * Data type of payload given to JWT
  */
 export interface JwtDataPayload {
-  address: string,
-  hasAccess: boolean, // TODO: Make more robust with some signed code?
+  address: string
+  hasAccess: boolean // TODO: Make more robust with some signed code?
 }
 
 /**

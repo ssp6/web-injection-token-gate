@@ -54,5 +54,5 @@ module.exports = {
   web3AuthApiBaseUrl: process.env.WEB3_AUTH_API_BASE_URL,
 
   // Secret for signing jwt
-  jwtSecret: process.env.JWT_SECRET,
+  jwtSecret: process.env.JWT_SECRET
 }

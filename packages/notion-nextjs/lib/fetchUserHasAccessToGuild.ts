@@ -6,8 +6,8 @@ import { web3AuthApiBaseUrl } from './config'
  */
 type GuildInfo = {
   id: number
-  name: string,
-  urlName: string,
+  name: string
+  urlName: string
   description: string
 }
 
@@ -23,17 +23,31 @@ type GuildRoleStatus = {
  * @param userAddress Address of user's wallet
  * @param guildUrlName Id of guild/community as dictated by agora.space
  */
-export const fetchUserHasAccessToGuild = async (userAddress: string, guildUrlName: string) => {
+export const fetchUserHasAccessToGuild = async (
+  userAddress: string,
+  guildUrlName: string
+) => {
   try {
     // TODO: Figure out why got.get is not parsing body?
-    const { body: guildDetailsBody } = await got.get<string>(`${web3AuthApiBaseUrl}/guild/urlName/${guildUrlName}`)
+    const { body: guildDetailsBody } = await got.get<string>(
+      `${web3AuthApiBaseUrl}/guild/urlName/${guildUrlName}`
+    )
     const guildDetailsBodyParsed = JSON.parse(guildDetailsBody) as GuildInfo
-    const { body: userGuildAccessBody } = await got.get<string>(`${web3AuthApiBaseUrl}/guild/access/${guildDetailsBodyParsed.id}/${userAddress}`)
-    const userGuildAccessBodyParsed = JSON.parse(userGuildAccessBody) as GuildRoleStatus[]
-    return userGuildAccessBodyParsed.some((guildRoleStatus) => guildRoleStatus.access)
+    const { body: userGuildAccessBody } = await got.get<string>(
+      `${web3AuthApiBaseUrl}/guild/access/${guildDetailsBodyParsed.id}/${userAddress}`
+    )
+    const userGuildAccessBodyParsed = JSON.parse(
+      userGuildAccessBody
+    ) as GuildRoleStatus[]
+    return userGuildAccessBodyParsed.some(
+      (guildRoleStatus) => guildRoleStatus.access
+    )
   } catch (e) {
     const errorBody = e?.response?.body ? JSON.parse(e.response.body) : {}
-    const error = errorBody['errors'].length > 0 ? errorBody.errors[0] : 'Unknown error from guild auth'
+    const error =
+      errorBody['errors'].length > 0
+        ? errorBody.errors[0]
+        : 'Unknown error from guild auth'
     console.log('Error: ', error)
     throw new Error(`Error from guild auth: ${error?.msg}`)
   }

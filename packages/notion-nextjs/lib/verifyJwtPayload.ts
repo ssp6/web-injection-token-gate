@@ -13,7 +13,9 @@ export const verifyJwtPayload = (jwtString: string): JwtDataPayload => {
     const jwtPayload = jwt.verify(jwtString, jwtSecret) as JwtDataPayloadDecoded
     const { address, hasAccess } = jwtPayload
     if (!address || !hasAccess) {
-      throw new Error(`payload must contain all keys - { address: ${address}, hasAccess: ${hasAccess} }`)
+      throw new Error(
+        `payload must contain all keys - { address: ${address}, hasAccess: ${hasAccess} }`
+      )
     }
     return { address, hasAccess }
   } catch (e) {

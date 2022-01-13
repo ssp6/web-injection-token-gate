@@ -4,5 +4,5 @@ import { JwtDataPayload } from './types'
 
 export const signJwt = (data: JwtDataPayload) =>
   jwt.sign(data, jwtSecret, {
-    expiresIn: "30m"
+    expiresIn: '30m'
   })
