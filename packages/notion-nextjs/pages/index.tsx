@@ -1,13 +1,25 @@
+import { GetServerSideProps } from 'next'
 import React from 'react'
 import { domain } from 'lib/config'
 import { resolveNotionPage } from 'lib/resolve-notion-page'
 import { NotionPage } from 'components'
 
-export const getStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  console.log('req: ', context.req)
+  const authToken = context.req?.cookies?.authToken
+  if (!authToken) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/sign-in`
+      }
+    }
+  }
+
   try {
     const props = await resolveNotionPage(domain)
 
-    return { props, revalidate: 10 }
+    return { props }
   } catch (err) {
     console.error('page error', domain, err)
 

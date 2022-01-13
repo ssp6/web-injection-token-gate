@@ -109,9 +109,14 @@ export const api = {
   searchNotion: `${apiBaseUrl}/search-notion`
 }
 
-export const web3AuthApiBaseUrl = getSiteConfig('web3AuthApiBaseUrl', '')
+export const guildUrlName: string = getSiteConfig('guildUrlName')
 
-export const jwtSecret = getSiteConfig('jwtSecret', '')
+export const web3AuthApiBaseUrl: string | null = getSiteConfig(
+  'web3AuthApiBaseUrl',
+  null
+)
+
+export const jwtSecret: string | null = getSiteConfig('jwtSecret', null)
 
 // ----------------------------------------------------------------------------
 

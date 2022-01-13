@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { createMessage } from '../../lib/createMessage'
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
+import { timestampNowPlusMinutes } from '../../lib/timestampNowPlusMinutes'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.debug('sign-in received event:', req)
@@ -37,11 +38,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const authToken = signJwt({ address, hasAccess })
-    // TODO: Add Secure;
-    return res
-      .status(200)
-      .setHeader('Set-Cookie', `authToken="${authToken}"; HttpOnly;`)
-      .send({ message: 'Successfully signed in' })
+    return (
+      res
+        .status(200)
+        // TODO: Add Secure;
+        .setHeader(
+          'Set-Cookie',
+          `authToken=${authToken}; HttpOnly; Expires=${timestampNowPlusMinutes(
+            30
+          )}; Path=/`
+        )
+        .send({ message: 'Successfully signed in' })
+    )
   } catch (e) {
     return res.status(500).json({ error: e.message })
   }

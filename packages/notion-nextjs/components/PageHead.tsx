@@ -36,7 +36,10 @@ export const PageHead: React.FC<Props> = ({
       <meta property='og:type' content='website' />
 
       {title && <meta property='og:title' content={title} />}
-      {site?.name || title && <meta property='og:site_name' content={site?.name || title} />}
+      {site?.name ||
+        (title && (
+          <meta property='og:site_name' content={site?.name || title} />
+        ))}
 
       <meta name='twitter:title' content={title} />
       {site?.domain && <meta property='twitter:domain' content={site.domain} />}

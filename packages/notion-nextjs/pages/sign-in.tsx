@@ -1,8 +1,12 @@
 import { NextPage } from 'next'
-import { SignIn } from '../components/SignIn'
+import dynamic from 'next/dynamic'
+
+const DynamicSignInWithNoSSR = dynamic(() => import('../components/SignIn'), {
+  ssr: false
+})
 
 const SignInPage: NextPage = (props) => {
-  return (<SignIn {...props}/>)
+  return <DynamicSignInWithNoSSR {...props} />
 }
 
 export default SignInPage

@@ -50,6 +50,9 @@ module.exports = {
   // }
   pageUrlOverrides: null,
 
+  //urlName of guild taken from url bar
+  guildUrlName: 'notiontokengate',
+
   // Api url to external auth service (agora.space or custom)
   web3AuthApiBaseUrl: process.env.WEB3_AUTH_API_BASE_URL,
 

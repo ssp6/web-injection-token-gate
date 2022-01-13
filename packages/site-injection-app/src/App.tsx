@@ -140,7 +140,7 @@ function App() {
             let signature = await userSigner.signMessage(message)
             const { data } = await axios.post(
                 `${API_BASE_URL}/signIn`,
-                { signature, address, guildUrlName, timeStamp }
+                { signature, address, guildUrlName, timeStamp },
             )
             // TODO: Update to something more secure
             setJwtToken(data.authToken)

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { fetchUserHasAccessToGuild } from '../../lib/fetchUserHasAccessToGuild'
 import { signJwt } from '../../lib/signJwt'
+import { timestampNowPlusMinutes } from '../../lib/timestampNowPlusMinutes'
 import { verifyJwtPayload } from '../../lib/verifyJwtPayload'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -45,7 +46,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // TODO: Add Secure;
     return res
       .status(200)
-      .setHeader('Set-Cookie', `authToken="${authToken}"; HttpOnly;`)
+      .setHeader(
+        'Set-Cookie',
+        `authToken=${authToken}; HttpOnly; Expires=${timestampNowPlusMinutes(
+          30
+        )}; Path=/`
+      )
       .send({ message: 'User has access to guild' })
   } catch (e) {
     return res.status(500).json({ error: e.message })

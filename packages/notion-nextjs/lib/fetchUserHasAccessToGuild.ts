@@ -28,20 +28,15 @@ export const fetchUserHasAccessToGuild = async (
   guildUrlName: string
 ) => {
   try {
-    // TODO: Figure out why got.get is not parsing body?
-    const { body: guildDetailsBody } = await got.get<string>(
-      `${web3AuthApiBaseUrl}/guild/urlName/${guildUrlName}`
-    )
-    const guildDetailsBodyParsed = JSON.parse(guildDetailsBody) as GuildInfo
-    const { body: userGuildAccessBody } = await got.get<string>(
-      `${web3AuthApiBaseUrl}/guild/access/${guildDetailsBodyParsed.id}/${userAddress}`
-    )
-    const userGuildAccessBodyParsed = JSON.parse(
-      userGuildAccessBody
-    ) as GuildRoleStatus[]
-    return userGuildAccessBodyParsed.some(
-      (guildRoleStatus) => guildRoleStatus.access
-    )
+    const guildDetailsBody = await got
+      .get(`${web3AuthApiBaseUrl}/guild/urlName/${guildUrlName}`)
+      .json<GuildInfo>()
+    const userGuildAccessBody = await got
+      .get<string>(
+        `${web3AuthApiBaseUrl}/guild/access/${guildDetailsBody.id}/${userAddress}`
+      )
+      .json<GuildRoleStatus[]>()
+    return userGuildAccessBody.some((guildRoleStatus) => guildRoleStatus.access)
   } catch (e) {
     const errorBody = e?.response?.body ? JSON.parse(e.response.body) : {}
     const error =
