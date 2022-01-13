@@ -36,11 +36,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const hasAccess = await fetchUserHasAccessToGuild(address, guildUrlName)
     if (!hasAccess) {
-      return res
-        .status(403)
-        .send({
-          message: `Address ${address} does not have access to guild ${guildUrlName}`
-        })
+      return res.status(403).send({
+        message: `Address ${address} does not have access to guild ${guildUrlName}`
+      })
     }
 
     const authToken = signJwt({ address, hasAccess })

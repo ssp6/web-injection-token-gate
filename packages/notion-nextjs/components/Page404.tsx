@@ -10,14 +10,7 @@ export const Page404: React.FC<types.PageProps> = ({ site, pageId, error }) => {
 
   return (
     <>
-      <PageHead site={site} />
-
-      <Head>
-        <meta property='og:site_name' content={title} />
-        <meta property='og:title' content={title} />
-
-        <title>{title}</title>
-      </Head>
+      <PageHead site={site} title={title} />
 
       <div className={styles.container}>
         <main className={styles.main}>

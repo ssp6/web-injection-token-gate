@@ -1,22 +1,8 @@
 import { NextPage } from 'next'
+import { SignIn } from '../components/SignIn'
 
-const SignInPage: NextPage = () => {
-  return (
-    <div
-      className='App'
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        maxWidth: '100%'
-      }}
-    >
-      <h1>Membership required to access</h1>
-    </div>
-  )
+const SignInPage: NextPage = (props) => {
+  return (<SignIn {...props}/>)
 }
-
-const styles = {}
 
 export default SignInPage
