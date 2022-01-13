@@ -1,29 +1,28 @@
 module.exports = {
   // where it all starts -- the site's root Notion page (required)
-  rootNotionPageId: '7cfba5335c5a4da9b6c3ab8b393cefe3', // TODO: Change
+  rootNotionPageId: '', // TODO: Add your own
 
   // if you want to restrict pages to a single notion workspace (optional)
   // (this should be a Notion ID; see the docs for how to extract this)
   rootNotionSpaceId: null,
 
   // basic site info (required)
-  name: 'Sean Paterson', // TODO: Change
-  domain: 'test.com', // TODO: Change
-  author: 'Sean Paterson', // TODO: Change
+  name: '', // TODO: Add your own
+  domain: '', // TODO: Add your own
+  author: '', // TODO: Add your own
 
   // open graph metadata (optional)
-  description: 'Example site description', // TODO: Change
-  socialImageTitle: 'Transitive Bullshit',
-  socialImageSubtitle: 'Hello World! 👋',
+  description: '', // TODO: Change
+  socialImageTitle: '', // TODO: Add your own
+  socialImageSubtitle: '', // TODO: Add your own
 
-  // social usernames (optional) // TODO: Change
-  twitter: '',
-  github: '',
-  linkedin: '',
+  // social usernames (optional
+  twitter: '', // TODO: Add your own
+  github: '', // TODO: Add your own
+  linkedin: '', // TODO: Add your own
 
   // default notion icon and cover images for site-wide consistency (optional)
   // page-specific values will override these site-wide defaults
-  // TODO: Change
   defaultPageIcon: null,
   defaultPageCover: null,
   defaultPageCoverPosition: 0.5,
@@ -50,12 +49,12 @@ module.exports = {
   // }
   pageUrlOverrides: null,
 
-  //urlName of guild taken from url bar
-  guildUrlName: 'notiontokengate',
-
   // Api url to external auth service (agora.space or custom)
-  web3AuthApiBaseUrl: process.env.WEB3_AUTH_API_BASE_URL,
+  web3AuthApiBaseUrl: 'https://api.agora.space',
+
+  //urlName of guild taken from url bar
+  guildUrlName: '', // TODO: Update with own guild urlName OR leave blank to turn off token gating
 
   // Secret for signing jwt
-  jwtSecret: process.env.JWT_SECRET
+  jwtSecret: process.env.JWT_SECRET // TODO: Create .env file with JWT_SECRET & add env variable to vercel
 }
